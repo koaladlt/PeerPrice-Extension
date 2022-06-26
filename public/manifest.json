@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Binance p2p extension",
+  "version": "1.0",
+  "description": "Binance",
+  "action": {
+    "default_icon": "logo.png",
+    "default_popup": "popup.html"
+  }
+}
