@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy } from 'react';
 import { render } from 'react-dom';
 import axios from 'axios';
 import {
@@ -22,11 +22,16 @@ const App = () => {
   const [condition, setCondition] = useState('buy');
   const [verifiedUser, setVerifiedUser] = useState(false);
   const [url, setUrl] = useState('');
+  const controller = new AbortController();
 
   useEffect(() => {
     if (selectedCurrency.length > 0) {
       getPrice(selectedCurrency);
     }
+
+    return () => {
+      controller.abort();
+    };
   }, [condition, verifiedUser]);
 
   const getPrice = async (currency) => {
@@ -34,12 +39,16 @@ const App = () => {
     setSelectedCurrency(currency);
     setCondition(condition);
     setLoading(true);
+
     try {
       if (condition === 'sell') {
         const req = await axios.get(
           verifiedUser
             ? `${process.env.API}/verified?currency=${currency}&condition=${condition}`
-            : `${process.env.API}/?currency=${currency}&condition=${condition}`
+            : `${process.env.API}/?currency=${currency}&condition=${condition}`,
+          {
+            signal: controller.signal,
+          }
         );
         const res = req;
 
@@ -50,17 +59,21 @@ const App = () => {
         const req = await axios.get(
           verifiedUser
             ? `${process.env.API}/verified?currency=${currency}`
-            : ` ${process.env.API}/?currency=${currency}`
+            : ` ${process.env.API}/?currency=${currency}`,
+          {
+            signal: controller.signal,
+          }
         );
         const res = req;
         setUrl(res.data.url);
 
         setPrices(res.data.prices);
       }
+
       setLoading(false);
     } catch (error) {
-      console.error(error);
       setLoading(false);
+      console.error(error.message);
     }
   };
 
@@ -98,6 +111,7 @@ const App = () => {
             variant={'link'}
             textDecoration={selectedCurrency === 'USDT' ? 'underline' : null}
             textUnderlineOffset={4}
+            disabled={loading}
           >
             USDT
           </Button>
@@ -110,6 +124,7 @@ const App = () => {
             onClick={() => {
               getPrice('DAI');
             }}
+            disabled={loading}
           >
             DAI
           </Button>
@@ -122,6 +137,7 @@ const App = () => {
             onClick={() => {
               getPrice('BUSD');
             }}
+            disabled={loading}
           >
             BUSD
           </Button>
@@ -134,6 +150,7 @@ const App = () => {
             onClick={() => {
               getPrice('BTC');
             }}
+            disabled={loading}
           >
             BTC
           </Button>
@@ -146,6 +163,7 @@ const App = () => {
             onClick={() => {
               getPrice('ETH');
             }}
+            disabled={loading}
           >
             ETH
           </Button>
@@ -155,6 +173,7 @@ const App = () => {
             isChecked={verifiedUser}
             textColor={'whiteAlpha.800'}
             onChange={() => setVerifiedUser(!verifiedUser)}
+            disabled={loading}
           >
             <Text fontSize={'x-small'} fontWeight='bold'>
               Solo usuarios verificados
@@ -171,6 +190,7 @@ const App = () => {
             borderRadius={5}
             fontWeight='bold'
             onChange={(e) => handleChangeSelect(e)}
+            disabled={loading}
           >
             <option value='buy'>Comprar</option>
             <option value='sell'>Vender</option>
@@ -179,8 +199,8 @@ const App = () => {
         <VStack backgroundColor='gray.800' my={6}>
           {loading && <Spinner alignItems='center' color='#F0B90B' />}
           {prices.length > 0
-            ? prices.map((price) => (
-                <VStack width='100%'>
+            ? prices.map((price, idx) => (
+                <VStack key={idx} width='100%'>
                   <HStack
                     justifyContent='space-evenly'
                     spacing={4}
@@ -215,15 +235,24 @@ const App = () => {
                 </VStack>
               ))
             : !loading && (
-                <Text
-                  color='whiteAlpha.800'
-                  fontSize='medium'
-                  textAlign='center'
-                  fontWeight='extrabold'
-                >
-                  Selecciona un activo para obtener
-                  <Text> su precio actual en ARS</Text>
-                </Text>
+                <Box>
+                  <Text
+                    color='whiteAlpha.800'
+                    fontSize='medium'
+                    textAlign='center'
+                    fontWeight='extrabold'
+                  >
+                    Selecciona un activo para obtener
+                  </Text>
+                  <Text
+                    color='whiteAlpha.800'
+                    fontSize='medium'
+                    textAlign='center'
+                    fontWeight='extrabold'
+                  >
+                    su precio actual en ARS
+                  </Text>
+                </Box>
               )}
         </VStack>
       </Box>

@@ -1,8 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "Binance p2p extension",
+  "name": "P2P ARS",
   "version": "1.0",
-  "description": "Binance",
+  "description": "Cotizaciones en tiempo real de Binance P2P en pesos argentinos",
+  "icons": {
+    "16": "logo.png",
+    "48": "logo.png",
+    "128": "logo.png"
+  },
   "action": {
     "default_icon": "logo.png",
     "default_popup": "popup.html"
