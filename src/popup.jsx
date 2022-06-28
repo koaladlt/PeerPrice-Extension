@@ -108,6 +108,7 @@ const App = () => {
             color='#F0B90B'
             size='sm'
             onClick={() => getPrice('USDT')}
+            fontFamily='Nunito'
             variant={'link'}
             textDecoration={selectedCurrency === 'USDT' ? 'underline' : null}
             textUnderlineOffset={4}
@@ -175,7 +176,7 @@ const App = () => {
             onChange={() => setVerifiedUser(!verifiedUser)}
             disabled={loading}
           >
-            <Text fontSize={'x-small'} fontWeight='bold'>
+            <Text fontSize={'xs'} fontWeight='bold'>
               Solo usuarios verificados
             </Text>
           </Checkbox>
