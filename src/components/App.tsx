@@ -81,10 +81,6 @@ const App = () => {
     }
   };
 
-  const handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>) => {
-    setCondition(e.target.value);
-  };
-
   return (
     <VStack backgroundColor='gray.800'>
       <Box width='100%' backgroundColor='gray.700' py={2}>
@@ -203,7 +199,7 @@ const App = () => {
             textAlign='center'
             borderRadius={5}
             fontWeight='bold'
-            onChange={(e) => handleChangeSelect(e)}
+            onChange={(e) => setCondition(e.target.value)}
             disabled={loading}
           >
             <option value='buy'>Comprar</option>
