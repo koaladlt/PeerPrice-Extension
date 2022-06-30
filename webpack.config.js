@@ -8,7 +8,7 @@ module.exports = {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },
   entry: {
-    popup: './src/popup.jsx',
+    popup: './src/popup.tsx',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -17,13 +17,10 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
+        test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env', '@babel/preset-react'],
-          },
+          loader: 'ts-loader',
         },
       },
     ],

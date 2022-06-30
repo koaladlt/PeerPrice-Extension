@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import axios from 'axios';
 import {
   VStack,
@@ -6,20 +6,27 @@ import {
   Text,
   HStack,
   Box,
-  Spinner,
   Checkbox,
   Select,
-  Divider,
 } from '@chakra-ui/react';
 import { FaGithub } from 'react-icons/fa';
+import Body from './Body';
+
+interface ResponseData {
+  data: {
+    prices: string[];
+    url: string;
+  };
+}
 
 const App = () => {
   const [prices, setPrices] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedCurrency, setSelectedCurrency] = useState('');
-  const [condition, setCondition] = useState('buy');
+  const [selectedCurrency, setSelectedCurrency] = useState<string>('');
+  const [condition, setCondition] = useState<string>('buy');
   const [verifiedUser, setVerifiedUser] = useState(false);
   const [url, setUrl] = useState('');
+  const [error, setError] = useState(false);
   const controller = new AbortController();
 
   useEffect(() => {
@@ -32,13 +39,12 @@ const App = () => {
     };
   }, [condition, verifiedUser]);
 
-  const getPrice = async (currency) => {
-    setPrices([]);
-    setSelectedCurrency(currency);
-    setCondition(condition);
-    setLoading(true);
-
+  const getPrice = async (currency: string) => {
     try {
+      setPrices([]);
+      setSelectedCurrency(currency);
+      setCondition(condition);
+      setLoading(true);
       if (condition === 'sell') {
         const req = await axios.get(
           verifiedUser
@@ -62,7 +68,7 @@ const App = () => {
             signal: controller.signal,
           }
         );
-        const res = req;
+        const res: ResponseData = req;
         setUrl(res.data.url);
 
         setPrices(res.data.prices);
@@ -71,11 +77,11 @@ const App = () => {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.error(error.message);
+      setError(true);
     }
   };
 
-  const handleChangeSelect = (e) => {
+  const handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>) => {
     setCondition(e.target.value);
   };
 
@@ -108,7 +114,9 @@ const App = () => {
             onClick={() => getPrice('USDT')}
             fontFamily='Nunito'
             variant={'link'}
-            textDecoration={selectedCurrency === 'USDT' ? 'underline' : null}
+            textDecoration={
+              selectedCurrency === 'USDT' ? 'underline' : undefined
+            }
             textUnderlineOffset={4}
             disabled={loading}
           >
@@ -118,7 +126,9 @@ const App = () => {
             color='#F0B90B'
             size='sm'
             variant='link'
-            textDecoration={selectedCurrency === 'DAI' ? 'underline' : null}
+            textDecoration={
+              selectedCurrency === 'DAI' ? 'underline' : undefined
+            }
             textUnderlineOffset={4}
             onClick={() => {
               getPrice('DAI');
@@ -131,7 +141,9 @@ const App = () => {
             color='#F0B90B'
             size='sm'
             variant='link'
-            textDecoration={selectedCurrency === 'BUSD' ? 'underline' : null}
+            textDecoration={
+              selectedCurrency === 'BUSD' ? 'underline' : undefined
+            }
             textUnderlineOffset={4}
             onClick={() => {
               getPrice('BUSD');
@@ -144,7 +156,9 @@ const App = () => {
             color='#F0B90B'
             size='sm'
             variant='link'
-            textDecoration={selectedCurrency === 'BTC' ? 'underline' : null}
+            textDecoration={
+              selectedCurrency === 'BTC' ? 'underline' : undefined
+            }
             textUnderlineOffset={4}
             onClick={() => {
               getPrice('BTC');
@@ -157,7 +171,9 @@ const App = () => {
             color='#F0B90B'
             size='sm'
             variant='link'
-            textDecoration={selectedCurrency === 'ETH' ? 'underline' : null}
+            textDecoration={
+              selectedCurrency === 'ETH' ? 'underline' : undefined
+            }
             textUnderlineOffset={4}
             onClick={() => {
               getPrice('ETH');
@@ -180,7 +196,6 @@ const App = () => {
           </Checkbox>
           <Select
             width='25%'
-            spacing={3}
             defaultValue='Comprar'
             color={'whiteAlpha.800'}
             fontSize='xs'
@@ -195,65 +210,13 @@ const App = () => {
             <option value='sell'>Vender</option>
           </Select>
         </HStack>
-        <VStack backgroundColor='gray.800' my={6}>
-          {loading && <Spinner alignItems='center' color='#F0B90B' />}
-          {prices.length > 0
-            ? prices.map((price, idx) => (
-                <VStack key={idx} width='100%'>
-                  <HStack
-                    justifyContent='space-evenly'
-                    spacing={4}
-                    width='100%'
-                  >
-                    <HStack>
-                      <Text
-                        color='whiteAlpha.800'
-                        fontSize={'lg'}
-                        fontWeight='extrabold'
-                      >
-                        {price}
-                      </Text>
-                      <Text
-                        ml='1'
-                        color='whiteAlpha.800'
-                        fontSize='xx-small'
-                        fontWeight='extrabold'
-                      >
-                        ARS
-                      </Text>
-                    </HStack>
-                    <Button
-                      size='sm'
-                      colorScheme={condition === 'sell' ? 'red' : 'green'}
-                      onClick={() => window.open(url)}
-                    >
-                      {condition === 'sell' ? 'Vender' : 'Comprar'}
-                    </Button>
-                  </HStack>
-                  <Divider color='whiteAlpha.800' />
-                </VStack>
-              ))
-            : !loading && (
-                <Box>
-                  <Text
-                    color='whiteAlpha.800'
-                    fontSize='medium'
-                    textAlign='center'
-                    fontWeight='extrabold'
-                  >
-                    Selecciona un activo para obtener
-                  </Text>
-                  <Text
-                    color='whiteAlpha.800'
-                    fontSize='medium'
-                    textAlign='center'
-                    fontWeight='extrabold'
-                  >
-                    su precio actual en ARS
-                  </Text>
-                </Box>
-              )}
-        </VStack>
+        <Body
+          loading={loading}
+          error={error}
+          prices={prices}
+          condition={condition}
+          url={url}
+        />
       </Box>
     </VStack>
   );
