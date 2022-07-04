@@ -23,29 +23,65 @@ const App = () => {
   const [prices, setPrices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState<string>('');
-  const [condition, setCondition] = useState<string>('buy');
+  const [selectedCondition, setSelectedCondition] = useState<string>('');
+  const [selectedVerifiedUser, setSelectedVerifiedUser] = useState<boolean>();
+  const [condition, setCondition] = useState<string>('');
   const [verifiedUser, setVerifiedUser] = useState(false);
+  const [change, setChange] = useState(false);
   const [url, setUrl] = useState('');
   const [error, setError] = useState(false);
   const controller = new AbortController();
 
   useEffect(() => {
     if (selectedCurrency.length > 0) {
-      getPrice(selectedCurrency);
+      console.log(condition, selectedCurrency, verifiedUser);
+      getPrice(selectedCurrency, condition, verifiedUser);
+    } else {
+      chrome.storage.sync.get(
+        ['currency', 'condition', 'verifiedUser'],
+        ({ currency, condition, verifiedUser }) => {
+          if (currency) {
+            setCondition(condition);
+            setVerifiedUser(verifiedUser);
+            getPrice(currency, condition, verifiedUser);
+          }
+        }
+      );
     }
 
     return () => {
       controller.abort();
     };
-  }, [condition, verifiedUser]);
+  }, [change]);
 
-  const getPrice = async (currency: string) => {
+  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setCondition(e.target.value);
+    setChange(!change);
+  };
+
+  const handleVerified = () => {
+    setVerifiedUser(!verifiedUser);
+    setChange(!change);
+  };
+
+  const getPrice = async (
+    currency: string,
+    condition?: string,
+    verifiedUser?: boolean
+  ) => {
     try {
+      await chrome.storage.sync.set({
+        currency,
+        condition,
+        verifiedUser,
+      });
+
       setPrices([]);
       setSelectedCurrency(currency);
-      setCondition(condition);
+
       setLoading(true);
-      if (condition === 'sell') {
+
+      if (condition.length > 0 && condition === 'sell') {
         const req = await axios.get(
           verifiedUser
             ? `${process.env.API}/verified?currency=${currency}&condition=${condition}`
@@ -76,6 +112,7 @@ const App = () => {
 
       setLoading(false);
     } catch (error) {
+      console.log(error);
       setLoading(false);
       setError(true);
     }
@@ -107,7 +144,7 @@ const App = () => {
           <Button
             color='#F0B90B'
             size='sm'
-            onClick={() => getPrice('USDT')}
+            onClick={() => getPrice('USDT', condition, verifiedUser)}
             fontFamily='Nunito'
             variant={'link'}
             textDecoration={
@@ -127,7 +164,7 @@ const App = () => {
             }
             textUnderlineOffset={4}
             onClick={() => {
-              getPrice('DAI');
+              getPrice('DAI', condition, verifiedUser);
             }}
             disabled={loading}
           >
@@ -142,7 +179,7 @@ const App = () => {
             }
             textUnderlineOffset={4}
             onClick={() => {
-              getPrice('BUSD');
+              getPrice('BUSD', condition, verifiedUser);
             }}
             disabled={loading}
           >
@@ -157,7 +194,7 @@ const App = () => {
             }
             textUnderlineOffset={4}
             onClick={() => {
-              getPrice('BTC');
+              getPrice('BTC', condition, verifiedUser);
             }}
             disabled={loading}
           >
@@ -172,7 +209,7 @@ const App = () => {
             }
             textUnderlineOffset={4}
             onClick={() => {
-              getPrice('ETH');
+              getPrice('ETH', condition, verifiedUser);
             }}
             disabled={loading}
           >
@@ -183,7 +220,7 @@ const App = () => {
           <Checkbox
             isChecked={verifiedUser}
             textColor={'whiteAlpha.800'}
-            onChange={() => setVerifiedUser(!verifiedUser)}
+            onChange={() => handleVerified()}
             disabled={loading}
           >
             <Text fontSize={'xs'} fontWeight='bold'>
@@ -192,15 +229,15 @@ const App = () => {
           </Checkbox>
           <Select
             width='25%'
-            defaultValue='Comprar'
             color={'whiteAlpha.800'}
             fontSize='xs'
             size='xs'
             textAlign='center'
             borderRadius={5}
             fontWeight='bold'
-            onChange={(e) => setCondition(e.target.value)}
+            onChange={(e) => handleChange(e)}
             disabled={loading}
+            value={condition}
           >
             <option value='buy'>Comprar</option>
             <option value='sell'>Vender</option>

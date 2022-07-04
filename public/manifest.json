@@ -11,5 +11,6 @@
   "action": {
     "default_icon": "logo.png",
     "default_popup": "popup.html"
-  }
+  },
+  "permissions": ["storage"]
 }
