@@ -8,23 +8,20 @@ import {
   Box,
   Checkbox,
   Select,
+  Skeleton,
+  Stack,
 } from '@chakra-ui/react';
 import { FaGithub } from 'react-icons/fa';
-import Body from './Body';
 
-interface ResponseData {
-  data: {
-    prices: string[];
-    url: string;
-  };
-}
+import Body from './Body';
+import { getDollars, getPrices } from '../api/getPrices';
 
 const App = () => {
   const [prices, setPrices] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingDollars, setLoadingDollars] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState<string>('');
-  const [selectedCondition, setSelectedCondition] = useState<string>('');
-  const [selectedVerifiedUser, setSelectedVerifiedUser] = useState<boolean>();
+  const [dollars, setDollars] = useState({ blue: '', mep: '', ccl: '' });
   const [condition, setCondition] = useState<string>('');
   const [verifiedUser, setVerifiedUser] = useState(false);
   const [change, setChange] = useState(false);
@@ -53,6 +50,10 @@ const App = () => {
     };
   }, [change]);
 
+  useEffect(() => {
+    getDollarsPrices();
+  }, []);
+
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setCondition(e.target.value);
     setChange(!change);
@@ -61,6 +62,18 @@ const App = () => {
   const handleVerified = () => {
     setVerifiedUser(!verifiedUser);
     setChange(!change);
+  };
+
+  const getDollarsPrices = async () => {
+    try {
+      setLoadingDollars(true);
+      const d = await getDollars();
+      setDollars({ blue: d.blue, ccl: d.ccl, mep: d.mep });
+      setLoadingDollars(false);
+    } catch (error) {
+      console.log(error);
+      setLoadingDollars(false);
+    }
   };
 
   const getPrice = async (
@@ -77,38 +90,16 @@ const App = () => {
 
       setPrices([]);
       setSelectedCurrency(currency);
-
       setLoading(true);
 
-      if (condition.length > 0 && condition === 'sell') {
-        const req = await axios.get(
-          verifiedUser
-            ? `${process.env.API}/verified?currency=${currency}&condition=${condition}`
-            : `${process.env.API}/?currency=${currency}&condition=${condition}`,
-          {
-            signal: controller.signal,
-          }
-        );
-        const res = req;
-
-        setUrl(res.data.url);
-
-        setPrices(res.data.prices);
-      } else {
-        const req = await axios.get(
-          verifiedUser
-            ? `${process.env.API}/verified?currency=${currency}`
-            : ` ${process.env.API}/?currency=${currency}`,
-          {
-            signal: controller.signal,
-          }
-        );
-        const res: ResponseData = req;
-        setUrl(res.data.url);
-
-        setPrices(res.data.prices);
-      }
-
+      const data = await getPrices(
+        condition,
+        verifiedUser,
+        currency,
+        controller
+      );
+      setUrl(data.url);
+      setPrices(data.prices);
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -120,6 +111,16 @@ const App = () => {
   return (
     <VStack backgroundColor='gray.800'>
       <Box width='100%' backgroundColor='gray.700' py={2}>
+        <HStack
+          justifyContent='flex-end'
+          mr={2}
+          mb={2}
+          onClick={() => window.open('http://github.com/koaladlt')}
+          cursor='pointer'
+        >
+          <FaGithub color='white' size={15} />
+          <Text color={'whiteAlpha.800'}>@koaladlt</Text>
+        </HStack>
         <Text
           color={'whiteAlpha.800'}
           fontSize='large'
@@ -127,15 +128,42 @@ const App = () => {
         >
           Cotizaciones P2P en Binance
         </Text>
-        <HStack
-          justifyContent='flex-end'
-          mt={1}
-          mr={2}
-          onClick={() => window.open('http://github.com/koaladlt')}
-          cursor='pointer'
-        >
-          <FaGithub color='white' size={15} />
-          <Text color={'whiteAlpha.800'}>@koaladlt</Text>
+
+        <HStack mt={4} justifyContent='space-evenly'>
+          {loadingDollars ? (
+            <>
+              <Skeleton
+                startColor='whiteAlpha.600'
+                endColor='whiteAlpha.400'
+                height={'20px'}
+                width='50px'
+              />
+              <Skeleton
+                startColor='whiteAlpha.600'
+                endColor='whiteAlpha.400'
+                height={'20px'}
+                width='50px'
+              />
+              <Skeleton
+                startColor='whiteAlpha.600'
+                endColor='whiteAlpha.400'
+                height={'20px'}
+                width='50px'
+              />
+            </>
+          ) : (
+            <>
+              <Text color='whiteAlpha.800' fontWeight='bold'>
+                Blue: ${dollars.blue}
+              </Text>
+              <Text color='whiteAlpha.800' fontWeight='bold'>
+                Mep: ${dollars.mep}
+              </Text>
+              <Text color='whiteAlpha.800' fontWeight='bold'>
+                CCL: ${dollars.ccl}
+              </Text>
+            </>
+          )}
         </HStack>
       </Box>
       <Box width='100%' backgroundColor='gray.800' my={2}>
