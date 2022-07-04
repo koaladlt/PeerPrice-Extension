@@ -34,7 +34,6 @@ const App = () => {
 
   useEffect(() => {
     if (selectedCurrency.length > 0) {
-      console.log(condition, selectedCurrency, verifiedUser);
       getPrice(selectedCurrency, condition, verifiedUser);
     } else {
       chrome.storage.sync.get(
