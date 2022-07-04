@@ -31,9 +31,6 @@ export const getPrices = async (
     const res = req;
 
     return res.data;
-    // setUrl(res.data.url);
-
-    //setPrices(res.data.prices);
   } else {
     const req = await axios.get(
       verifiedUser
@@ -45,8 +42,5 @@ export const getPrices = async (
     );
     const res: ResponseData = req;
     return res.data;
-    //setUrl(res.data.url);
-
-    //setPrices(res.data.prices);
   }
 };
