@@ -15,6 +15,7 @@ interface BodyProps {
   prices: string[];
   condition: string;
   url: string;
+  paymentMethod: string;
 }
 
 const Body: React.FC<BodyProps> = ({
@@ -23,10 +24,22 @@ const Body: React.FC<BodyProps> = ({
   prices,
   condition,
   url,
+  paymentMethod,
 }) => {
   return (
     <VStack backgroundColor='gray.800' my={6}>
-      {loading && <Spinner alignItems='center' color='#F0B90B' />}
+      {loading ? (
+        <>
+          {paymentMethod === 'CashInPerson' && (
+            <Text color='#E5C232' mb={2}>
+              La opción de efectivo suele tener poca demanda y por lo tanto el
+              tiempo de respuesta puede ser mayor
+            </Text>
+          )}
+          <Spinner alignItems='center' color='#F0B90B' />
+        </>
+      ) : null}
+
       {error ? (
         <>
           <Text color='red.300' fontSize='xl'>
@@ -34,6 +47,9 @@ const Body: React.FC<BodyProps> = ({
           </Text>
           <Text color='red.300' fontSize='xl'>
             Intentalo nuevamente
+          </Text>
+          <Text color='#F0B90B' fontSize='xl' fontWeight='extrabold'>
+            Tip: probá limpiando algunos filtros
           </Text>
         </>
       ) : prices.length > 0 ? (

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
-import axios from 'axios';
 import {
   VStack,
   Button,
@@ -17,7 +16,7 @@ import Body from './Body';
 import { getDollars, getPrices } from '../api/getPrices';
 
 const App = () => {
-  const [prices, setPrices] = useState([]);
+  const [prices, setPrices] = useState({ prices: [], errorMessage: '' });
   const [loading, setLoading] = useState(false);
   const [loadingDollars, setLoadingDollars] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState<string>('');
@@ -27,19 +26,23 @@ const App = () => {
   const [change, setChange] = useState(false);
   const [url, setUrl] = useState('');
   const [error, setError] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('');
   const controller = new AbortController();
 
   useEffect(() => {
     if (selectedCurrency.length > 0) {
-      getPrice(selectedCurrency, condition, verifiedUser);
+      getPrice(selectedCurrency, condition, verifiedUser, paymentMethod);
     } else {
+      console.log('entro en el else');
       chrome.storage.sync.get(
-        ['currency', 'condition', 'verifiedUser'],
-        ({ currency, condition, verifiedUser }) => {
+        ['currency', 'condition', 'verifiedUser', 'paymentMethod'],
+        ({ currency, condition, verifiedUser, paymentMethod }) => {
           if (currency) {
+            console.log(paymentMethod);
             setCondition(condition);
             setVerifiedUser(verifiedUser);
-            getPrice(currency, condition, verifiedUser);
+            setPaymentMethod(paymentMethod);
+            getPrice(currency, condition, verifiedUser, paymentMethod);
           }
         }
       );
@@ -54,8 +57,13 @@ const App = () => {
     getDollarsPrices();
   }, []);
 
-  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
+  const handleConditionChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setCondition(e.target.value);
+    setChange(!change);
+  };
+
+  const handlePaymentMethodChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setPaymentMethod(e.target.value);
     setChange(!change);
   };
 
@@ -78,28 +86,35 @@ const App = () => {
 
   const getPrice = async (
     currency: string,
-    condition?: string,
-    verifiedUser?: boolean
+    condition: string,
+    verifiedUser: boolean,
+    paymentMethod: string
   ) => {
     try {
       await chrome.storage.sync.set({
         currency,
         condition,
         verifiedUser,
+        paymentMethod,
       });
-
-      setPrices([]);
+      setError(false);
+      setPrices({ prices: [], errorMessage: '' });
       setSelectedCurrency(currency);
       setLoading(true);
 
       const data = await getPrices(
+        paymentMethod,
         condition,
         verifiedUser,
         currency,
         controller
       );
       setUrl(data.url);
-      setPrices(data.prices);
+      setPrices({
+        prices: data.prices,
+        errorMessage:
+          data.prices.length > 0 ? '' : 'No se ha encontrado ninguna oferta',
+      });
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -171,7 +186,9 @@ const App = () => {
           <Button
             color='#F0B90B'
             size='sm'
-            onClick={() => getPrice('USDT', condition, verifiedUser)}
+            onClick={() =>
+              getPrice('USDT', condition, verifiedUser, paymentMethod)
+            }
             fontFamily='Nunito'
             variant={'link'}
             textDecoration={
@@ -191,7 +208,7 @@ const App = () => {
             }
             textUnderlineOffset={4}
             onClick={() => {
-              getPrice('DAI', condition, verifiedUser);
+              getPrice('DAI', condition, verifiedUser, paymentMethod);
             }}
             disabled={loading}
           >
@@ -206,7 +223,7 @@ const App = () => {
             }
             textUnderlineOffset={4}
             onClick={() => {
-              getPrice('BUSD', condition, verifiedUser);
+              getPrice('BUSD', condition, verifiedUser, paymentMethod);
             }}
             disabled={loading}
           >
@@ -221,7 +238,7 @@ const App = () => {
             }
             textUnderlineOffset={4}
             onClick={() => {
-              getPrice('BTC', condition, verifiedUser);
+              getPrice('BTC', condition, verifiedUser, paymentMethod);
             }}
             disabled={loading}
           >
@@ -236,33 +253,44 @@ const App = () => {
             }
             textUnderlineOffset={4}
             onClick={() => {
-              getPrice('ETH', condition, verifiedUser);
+              getPrice('ETH', condition, verifiedUser, paymentMethod);
             }}
             disabled={loading}
           >
             ETH
           </Button>
         </HStack>
+
         <HStack my={4} justifyContent={'space-around'}>
-          <Checkbox
-            isChecked={verifiedUser}
-            textColor={'whiteAlpha.800'}
-            onChange={() => handleVerified()}
-            disabled={loading}
-          >
-            <Text fontSize={'xs'} fontWeight='bold'>
-              Solo usuarios verificados
-            </Text>
-          </Checkbox>
           <Select
-            width='25%'
+            width='35%'
             color={'whiteAlpha.800'}
             fontSize='xs'
             size='xs'
             textAlign='center'
             borderRadius={5}
             fontWeight='bold'
-            onChange={(e) => handleChange(e)}
+            disabled={loading}
+            value={paymentMethod}
+            onChange={(e) => handlePaymentMethodChange(e)}
+          >
+            <option value='all-payments'>Todos los pagos</option>
+            <option value='MercadoPagoNew'>MercadoPago</option>
+            <option value='BancoBrubankNew'>Brubank</option>
+            <option value='UalaNew'>Ualá</option>
+            <option value='BankArgentina'>Trans. bancaria</option>
+            <option value='CashInPerson'>Efectivo</option>
+          </Select>
+
+          <Select
+            width='35%'
+            color={'whiteAlpha.800'}
+            fontSize='xs'
+            size='xs'
+            borderRadius={5}
+            fontWeight='bold'
+            textAlign='center'
+            onChange={(e) => handleConditionChange(e)}
             disabled={loading}
             value={condition}
           >
@@ -270,12 +298,27 @@ const App = () => {
             <option value='sell'>Vender</option>
           </Select>
         </HStack>
+        <Stack my={4} display='flex' alignItems='center'>
+          <Checkbox
+            isChecked={verifiedUser}
+            textColor={'whiteAlpha.800'}
+            onChange={() => handleVerified()}
+            disabled={loading}
+            _hover={{ borderColor: '#E5C232' }}
+            colorScheme='yellow'
+          >
+            <Text fontSize={'xs'} fontWeight='bold'>
+              Solo usuarios verificados
+            </Text>
+          </Checkbox>
+        </Stack>
         <Body
           loading={loading}
           error={error}
-          prices={prices}
+          prices={prices.prices}
           condition={condition}
           url={url}
+          paymentMethod={paymentMethod}
         />
       </Box>
     </VStack>
