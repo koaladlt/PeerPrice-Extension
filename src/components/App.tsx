@@ -24,16 +24,15 @@ const App = () => {
   const [condition, setCondition] = useState<string>('');
   const [verifiedUser, setVerifiedUser] = useState(false);
   const [change, setChange] = useState(false);
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState('https://p2p.binance.com/');
   const [error, setError] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<string[]>([]);
   const controller = new AbortController();
 
   useEffect(() => {
     if (selectedCurrency.length > 0) {
       getPrice(selectedCurrency, condition, verifiedUser, paymentMethod);
     } else {
-      console.log('entro en el else');
       chrome.storage.sync.get(
         ['currency', 'condition', 'verifiedUser', 'paymentMethod'],
         ({ currency, condition, verifiedUser, paymentMethod }) => {
@@ -63,7 +62,7 @@ const App = () => {
   };
 
   const handlePaymentMethodChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setPaymentMethod(e.target.value);
+    setPaymentMethod([e.target.value]);
     setChange(!change);
   };
 
@@ -88,12 +87,12 @@ const App = () => {
     currency: string,
     condition: string,
     verifiedUser: boolean,
-    paymentMethod: string
+    paymentMethod: string[]
   ) => {
     try {
       await chrome.storage.sync.set({
         currency,
-        condition,
+        condition: condition.length > 0 ? condition : 'BUY',
         verifiedUser,
         paymentMethod,
       });
@@ -103,17 +102,18 @@ const App = () => {
       setLoading(true);
 
       const data = await getPrices(
-        paymentMethod,
-        condition,
-        verifiedUser,
         currency,
+        condition,
+        verifiedUser ? 'merchant' : 'user',
         controller
       );
-      setUrl(data.url);
+
+      console.log({ data });
+      // setUrl(data.url);
       setPrices({
-        prices: data.prices,
+        prices: data.data.map((price) => price.adv.price),
         errorMessage:
-          data.prices.length > 0 ? '' : 'No se ha encontrado ninguna oferta',
+          data.data.length > 0 ? '' : 'No se ha encontrado ninguna oferta',
       });
       setLoading(false);
     } catch (error) {
@@ -294,8 +294,8 @@ const App = () => {
             disabled={loading}
             value={condition}
           >
-            <option value='buy'>Comprar</option>
-            <option value='sell'>Vender</option>
+            <option value='BUY'>Comprar</option>
+            <option value='SELL'>Vender</option>
           </Select>
         </HStack>
         <Stack my={4} display='flex' alignItems='center'>

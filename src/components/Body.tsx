@@ -15,7 +15,7 @@ interface BodyProps {
   prices: string[];
   condition: string;
   url: string;
-  paymentMethod: string;
+  paymentMethod: string[];
 }
 
 const Body: React.FC<BodyProps> = ({
@@ -30,7 +30,7 @@ const Body: React.FC<BodyProps> = ({
     <VStack backgroundColor='gray.800' my={6}>
       {loading ? (
         <>
-          {paymentMethod === 'CashInPerson' && (
+          {paymentMethod[0] === 'CashInPerson' && (
             <Text color='#E5C232' mb={2}>
               La opción de efectivo suele tener poca demanda y por lo tanto el
               tiempo de respuesta puede ser mayor
@@ -75,10 +75,10 @@ const Body: React.FC<BodyProps> = ({
               </HStack>
               <Button
                 size='sm'
-                colorScheme={condition === 'sell' ? 'red' : 'green'}
+                colorScheme={condition === 'SELL' ? 'red' : 'green'}
                 onClick={() => window.open(url)}
               >
-                {condition === 'sell' ? 'Vender' : 'Comprar'}
+                {condition === 'SELL' ? 'Vender' : 'Comprar'}
               </Button>
             </HStack>
             <Divider color='whiteAlpha.800' />
