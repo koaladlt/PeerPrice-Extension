@@ -17,11 +17,6 @@ P2P ARS te deja revisar justamente eso de manera rápida y sencilla en tu navega
 
 ![gif](https://user-images.githubusercontent.com/64273203/176477874-10d7c1c9-0e25-4cda-9c97-d9e369a1358d.gif)
 
- 
-
-## ¿Cómo funciona?
-
-Debido a que Binance no nos otorga una API de las cotizaciones P2P, se realiza un scraping para así obtener las cotizaciones de manera real que nos muestra el sitio.
 
 # Descargar
 
