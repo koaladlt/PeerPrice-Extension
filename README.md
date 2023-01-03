@@ -15,7 +15,7 @@ Una extensión de Google Chrome para revisar los precios actuales de Binance P2P
 
 P2P ARS te deja revisar justamente eso de manera rápida y sencilla en tu navegador, teniendo la posibilidad de filtrar por **moneda**, **compra/venta** o por **usuario verificado**
 
-![gif](https://user-images.githubusercontent.com/64273203/176477874-10d7c1c9-0e25-4cda-9c97-d9e369a1358d.gif)
+![gif](https://i.imgur.com/Q3svZE6.gif)
 
 
 # Descargar
