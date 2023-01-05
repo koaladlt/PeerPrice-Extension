@@ -14,43 +14,6 @@ export const getDollars = async () => {
   return res;
 };
 
-// export const getPrices = async (
-//   paymentMethod: string,
-//   condition: string,
-//   verifiedUser: boolean,
-//   currency: string,
-//   controller: AbortController
-// ) => {
-//   try {
-//     if (condition.length > 0 && condition === 'sell') {
-//       const req = await axios.get(
-//         verifiedUser
-//           ? `${process.env.API}/verified?currency=${currency}&condition=${condition}&paymentMethod=${paymentMethod}`
-//           : `${process.env.API}/?currency=${currency}&condition=${condition}&paymentMethod=${paymentMethod}`,
-//         {
-//           signal: controller.signal,
-//         }
-//       );
-//       const res = req;
-
-//       return res.data;
-//     } else {
-//       const req = await axios.get(
-//         verifiedUser
-//           ? `${process.env.API}/verified?currency=${currency}&paymentMethod=${paymentMethod}`
-//           : ` ${process.env.API}/?currency=${currency}&paymentMethod=${paymentMethod}`,
-//         {
-//           signal: controller.signal,
-//         }
-//       );
-//       const res: ResponseData = req;
-//       return res.data;
-//     }
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
-
 export const getPrices = async (
   asset: string,
   tradeType: string,
