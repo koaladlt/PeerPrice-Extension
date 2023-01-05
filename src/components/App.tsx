@@ -21,7 +21,7 @@ const App = () => {
   const [loadingDollars, setLoadingDollars] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState<string>('');
   const [dollars, setDollars] = useState({ blue: '', mep: '', ccl: '' });
-  const [condition, setCondition] = useState<string>('');
+  const [condition, setCondition] = useState<string>('BUY');
   const [verifiedUser, setVerifiedUser] = useState(false);
   const [change, setChange] = useState(false);
   const [url, setUrl] = useState('https://p2p.binance.com/');
