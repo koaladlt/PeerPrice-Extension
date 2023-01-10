@@ -9,10 +9,12 @@ import {
   Select,
   Skeleton,
   Stack,
+  Tooltip,
 } from '@chakra-ui/react';
-import { FaGithub } from 'react-icons/fa';
+import { FaGithub, FaRegEnvelope } from 'react-icons/fa';
 
 import Body from './Body';
+import FeedBack from './Feedback';
 import { getDollars, getPrices } from '../api/getPrices';
 
 const App = () => {
@@ -27,6 +29,7 @@ const App = () => {
   const [url, setUrl] = useState('https://p2p.binance.com/');
   const [error, setError] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<string[]>([]);
+  const [feedbackPage, setFeedbackPage] = useState<boolean>(false);
   const controller = new AbortController();
 
   useEffect(() => {
@@ -126,15 +129,21 @@ const App = () => {
   return (
     <VStack backgroundColor='gray.800'>
       <Box width='100%' backgroundColor='gray.700' py={2}>
-        <HStack
-          justifyContent='flex-end'
-          mr={2}
-          mb={2}
-          onClick={() => window.open('http://github.com/koaladlt')}
-          cursor='pointer'
-        >
-          <FaGithub color='white' size={15} />
-          <Text color={'whiteAlpha.800'}>@koaladlt</Text>
+        <HStack justifyContent='space-between' mr={2} ml={2} mb={3}>
+          <HStack
+            onClick={() => setFeedbackPage(!feedbackPage)}
+            cursor='pointer'
+          >
+            <FaRegEnvelope color='#F0B90B' size={15} />
+            <Text color='whiteAlpha.800'>Feedback</Text>
+          </HStack>
+          <HStack
+            cursor='pointer'
+            onClick={() => window.open('http://github.com/koaladlt')}
+          >
+            <FaGithub color='#F0B90B' size={15} />
+            <Text color={'whiteAlpha.800'}>@koaladlt</Text>
+          </HStack>
         </HStack>
         <Text
           color={'whiteAlpha.800'}
@@ -182,144 +191,150 @@ const App = () => {
         </HStack>
       </Box>
       <Box width='100%' backgroundColor='gray.800' my={2}>
-        <HStack justifyContent='space-evenly'>
-          <Button
-            color='#F0B90B'
-            size='sm'
-            onClick={() =>
-              getPrice('USDT', condition, verifiedUser, paymentMethod)
-            }
-            fontFamily='Nunito'
-            variant={'link'}
-            textDecoration={
-              selectedCurrency === 'USDT' ? 'underline' : undefined
-            }
-            textUnderlineOffset={4}
-            disabled={loading}
-          >
-            USDT
-          </Button>
-          <Button
-            color='#F0B90B'
-            size='sm'
-            variant='link'
-            textDecoration={
-              selectedCurrency === 'DAI' ? 'underline' : undefined
-            }
-            textUnderlineOffset={4}
-            onClick={() => {
-              getPrice('DAI', condition, verifiedUser, paymentMethod);
-            }}
-            disabled={loading}
-          >
-            DAI
-          </Button>
-          <Button
-            color='#F0B90B'
-            size='sm'
-            variant='link'
-            textDecoration={
-              selectedCurrency === 'BUSD' ? 'underline' : undefined
-            }
-            textUnderlineOffset={4}
-            onClick={() => {
-              getPrice('BUSD', condition, verifiedUser, paymentMethod);
-            }}
-            disabled={loading}
-          >
-            BUSD
-          </Button>
-          <Button
-            color='#F0B90B'
-            size='sm'
-            variant='link'
-            textDecoration={
-              selectedCurrency === 'BTC' ? 'underline' : undefined
-            }
-            textUnderlineOffset={4}
-            onClick={() => {
-              getPrice('BTC', condition, verifiedUser, paymentMethod);
-            }}
-            disabled={loading}
-          >
-            BTC
-          </Button>
-          <Button
-            color='#F0B90B'
-            size='sm'
-            variant='link'
-            textDecoration={
-              selectedCurrency === 'ETH' ? 'underline' : undefined
-            }
-            textUnderlineOffset={4}
-            onClick={() => {
-              getPrice('ETH', condition, verifiedUser, paymentMethod);
-            }}
-            disabled={loading}
-          >
-            ETH
-          </Button>
-        </HStack>
+        {feedbackPage ? (
+          <FeedBack setFeedbackPage={setFeedbackPage} />
+        ) : (
+          <>
+            <HStack justifyContent='space-evenly'>
+              <Button
+                color='#F0B90B'
+                size='sm'
+                onClick={() =>
+                  getPrice('USDT', condition, verifiedUser, paymentMethod)
+                }
+                fontFamily='Nunito'
+                variant={'link'}
+                textDecoration={
+                  selectedCurrency === 'USDT' ? 'underline' : undefined
+                }
+                textUnderlineOffset={4}
+                disabled={loading}
+              >
+                USDT
+              </Button>
+              <Button
+                color='#F0B90B'
+                size='sm'
+                variant='link'
+                textDecoration={
+                  selectedCurrency === 'DAI' ? 'underline' : undefined
+                }
+                textUnderlineOffset={4}
+                onClick={() => {
+                  getPrice('DAI', condition, verifiedUser, paymentMethod);
+                }}
+                disabled={loading}
+              >
+                DAI
+              </Button>
+              <Button
+                color='#F0B90B'
+                size='sm'
+                variant='link'
+                textDecoration={
+                  selectedCurrency === 'BUSD' ? 'underline' : undefined
+                }
+                textUnderlineOffset={4}
+                onClick={() => {
+                  getPrice('BUSD', condition, verifiedUser, paymentMethod);
+                }}
+                disabled={loading}
+              >
+                BUSD
+              </Button>
+              <Button
+                color='#F0B90B'
+                size='sm'
+                variant='link'
+                textDecoration={
+                  selectedCurrency === 'BTC' ? 'underline' : undefined
+                }
+                textUnderlineOffset={4}
+                onClick={() => {
+                  getPrice('BTC', condition, verifiedUser, paymentMethod);
+                }}
+                disabled={loading}
+              >
+                BTC
+              </Button>
+              <Button
+                color='#F0B90B'
+                size='sm'
+                variant='link'
+                textDecoration={
+                  selectedCurrency === 'ETH' ? 'underline' : undefined
+                }
+                textUnderlineOffset={4}
+                onClick={() => {
+                  getPrice('ETH', condition, verifiedUser, paymentMethod);
+                }}
+                disabled={loading}
+              >
+                ETH
+              </Button>
+            </HStack>
 
-        <HStack my={4} justifyContent={'space-around'}>
-          <Select
-            width='35%'
-            color={'whiteAlpha.800'}
-            fontSize='xs'
-            size='xs'
-            textAlign='center'
-            borderRadius={5}
-            fontWeight='bold'
-            disabled={loading}
-            value={paymentMethod}
-            onChange={(e) => handlePaymentMethodChange(e)}
-          >
-            <option value='all-payments'>Todos los pagos</option>
-            <option value='MercadoPagoNew'>MercadoPago</option>
-            <option value='BancoBrubankNew'>Brubank</option>
-            <option value='UalaNew'>Ualá</option>
-            <option value='BankArgentina'>Trans. bancaria</option>
-            <option value='CashInPerson'>Efectivo</option>
-          </Select>
+            <HStack my={4} justifyContent={'space-around'}>
+              <Select
+                width='35%'
+                color={'whiteAlpha.800'}
+                fontSize='xs'
+                size='xs'
+                textAlign='center'
+                borderRadius={5}
+                fontWeight='bold'
+                disabled={loading}
+                value={paymentMethod}
+                onChange={(e) => handlePaymentMethodChange(e)}
+              >
+                <option value='all-payments'>Todos los pagos</option>
+                <option value='MercadoPagoNew'>MercadoPago</option>
+                <option value='BancoBrubankNew'>Brubank</option>
+                <option value='UalaNew'>Ualá</option>
+                <option value='BankArgentina'>Trans. bancaria</option>
+                <option value='CashInPerson'>Efectivo</option>
+              </Select>
 
-          <Select
-            width='35%'
-            color={'whiteAlpha.800'}
-            fontSize='xs'
-            size='xs'
-            borderRadius={5}
-            fontWeight='bold'
-            textAlign='center'
-            onChange={(e) => handleConditionChange(e)}
-            disabled={loading}
-            value={condition}
-          >
-            <option value='BUY'>Comprar</option>
-            <option value='SELL'>Vender</option>
-          </Select>
-        </HStack>
-        <Stack my={4} display='flex' alignItems='center'>
-          <Checkbox
-            isChecked={verifiedUser}
-            textColor={'whiteAlpha.800'}
-            onChange={() => handleVerified()}
-            disabled={loading}
-            _hover={{ borderColor: '#E5C232' }}
-            colorScheme='yellow'
-          >
-            <Text fontSize={'xs'} fontWeight='bold'>
-              Solo usuarios verificados
-            </Text>
-          </Checkbox>
-        </Stack>
-        <Body
-          loading={loading}
-          error={error}
-          prices={prices.prices}
-          condition={condition}
-          url={url}
-          paymentMethod={paymentMethod}
-        />
+              <Select
+                width='35%'
+                color={'whiteAlpha.800'}
+                fontSize='xs'
+                size='xs'
+                borderRadius={5}
+                fontWeight='bold'
+                textAlign='center'
+                onChange={(e) => handleConditionChange(e)}
+                disabled={loading}
+                value={condition}
+              >
+                <option value='BUY'>Comprar</option>
+                <option value='SELL'>Vender</option>
+              </Select>
+            </HStack>
+            <Stack my={4} display='flex' alignItems='center'>
+              <Checkbox
+                isChecked={verifiedUser}
+                textColor={'whiteAlpha.800'}
+                onChange={() => handleVerified()}
+                disabled={loading}
+                _hover={{ borderColor: '#E5C232' }}
+                colorScheme='yellow'
+              >
+                <Text fontSize={'xs'} fontWeight='bold'>
+                  Solo usuarios verificados
+                </Text>
+              </Checkbox>
+            </Stack>
+            <Body
+              loading={loading}
+              error={error}
+              prices={prices.prices}
+              condition={condition}
+              url={url}
+              paymentMethod={paymentMethod}
+            />
+          </>
+        )}
       </Box>
     </VStack>
   );

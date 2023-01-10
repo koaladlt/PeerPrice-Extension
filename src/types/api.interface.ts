@@ -7,6 +7,11 @@ export interface ResultStructure {
   success: boolean;
 }
 
+export interface EmailValues {
+  message: string;
+  mail: string;
+}
+
 export interface Datum {
   adv: Adv;
   advertiser: Advertiser;

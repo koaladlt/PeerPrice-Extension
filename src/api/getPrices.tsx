@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ResultStructure } from '../types/api.interface';
+import { ResultStructure, EmailValues } from '../types/api.interface';
 
 interface ResponseData {
   data: {
@@ -37,6 +37,16 @@ export const getPrices = async (
       { signal: controller.signal }
     );
     return req.data as ResultStructure;
+  } catch (error) {
+    console.log(error);
+    throw new Error();
+  }
+};
+
+export const sendEmail = async (body: EmailValues) => {
+  try {
+    const req = await axios.post(`${process.env.API}/sendMail`, body);
+    return req.data;
   } catch (error) {
     console.log(error);
     throw new Error();

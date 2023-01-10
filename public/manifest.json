@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "P2P ARS",
-  "version": "1.6.1",
+  "version": "1.6.4",
   "description": "Cotizaciones en tiempo real de Binance P2P en pesos argentinos",
   "icons": {
     "16": "logo.png",
