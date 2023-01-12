@@ -2,7 +2,6 @@ import { Box, Button, Divider, HStack, Text, VStack } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { FaCopy, FaCheck, FaArrowLeft } from 'react-icons/fa';
 import { cryptoNetwork, cryptoToDonate, cryptoAdresses } from '../data';
-import { CryptoAddresses, CryptoToDonate } from '../types/data.interface';
 
 interface DonateProps {
   fiat: string;

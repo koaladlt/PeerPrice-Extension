@@ -29,9 +29,7 @@ const App = () => {
   const [change, setChange] = useState(false);
   const [url, setUrl] = useState('https://p2p.binance.com/');
   const [error, setError] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<string[]>([
-    'all-payments',
-  ]);
+  const [paymentMethod, setPaymentMethod] = useState<string[]>(['']);
   const [page, setPage] = useState<string>('Home');
   const [fiat, setFiat] = useState<string>('ARS');
   const controller = new AbortController();
