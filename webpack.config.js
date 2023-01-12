@@ -23,6 +23,18 @@ module.exports = {
           loader: 'ts-loader',
         },
       },
+      {
+        test: /\.jsx?$/,
+        include: path.join(__dirname, '/client/src'),
+        loader: 'babel-loader',
+        options: {
+          presets: ['react', 'es2015', 'stage-1'],
+        },
+      },
+      {
+        test: /\.(gif|svg|jpg|png)$/,
+        loader: 'file-loader',
+      },
     ],
   },
   plugins: [

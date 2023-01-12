@@ -14,10 +14,11 @@ import { sendEmail } from '../api/getPrices';
 import { EmailValues } from '../types/api.interface';
 
 interface FeedbackProps {
-  setFeedbackPage: (e: boolean) => void;
+  setPage: (e: string) => void;
+  fiat: string;
 }
 
-const FeedBack: React.FC<FeedbackProps> = ({ setFeedbackPage }) => {
+const FeedBack: React.FC<FeedbackProps> = ({ setPage, fiat }) => {
   const [values, setValues] = useState<EmailValues>({ message: '', mail: '' });
   // Need to implement a state manager for this
   const [loading, setLoading] = useState<boolean>(false);
@@ -66,14 +67,18 @@ const FeedBack: React.FC<FeedbackProps> = ({ setFeedbackPage }) => {
           cursor='pointer'
           color='#F0B90B'
           size={15}
-          onClick={() => setFeedbackPage(false)}
+          onClick={() => setPage('Home')}
         />
       </Box>
       <Text color='white' fontWeight='bold' fontSize='md'>
-        ¿Hay alguna funcionalidad que te gustaría ver?
+        {fiat === 'BRL'
+          ? 'Existe alguma funcionalidade que você gostaria de ver?'
+          : '¿Hay alguna funcionalidad que te gustaría ver?'}
       </Text>
       <Text color='white' fontSize='sm' fontWeight='bold'>
-        ¡Escribime y te contesto a la brevedad!
+        {fiat === 'BRL'
+          ? 'Escreva-me e responderei o mais rápido possível!'
+          : '¡Escribime y te contesto a la brevedad!'}
       </Text>
       <Divider color='whiteAlpha.400' my={5} />
       <VStack justifyContent='center' mt={6} mb={2} spacing={6}>
@@ -85,7 +90,7 @@ const FeedBack: React.FC<FeedbackProps> = ({ setFeedbackPage }) => {
             color='whiteAlpha.800'
             fontWeight='bold'
           >
-            Tu dirección de email
+            {fiat === 'BRL' ? 'Seu endereço de email' : 'Tu dirección de email'}
           </FormLabel>
           <Text
             fontSize='xs'
@@ -94,7 +99,9 @@ const FeedBack: React.FC<FeedbackProps> = ({ setFeedbackPage }) => {
             color='whiteAlpha.800'
             fontWeight='bold'
           >
-            (lo usaré solo para contestar tu mensaje)
+            {fiat === 'BRL'
+              ? 'Vou usá-lo apenas para responder a sua mensagem'
+              : '(lo usaré solo para contestar tu mensaje)'}
           </Text>
         </VStack>
         <Input
@@ -110,7 +117,7 @@ const FeedBack: React.FC<FeedbackProps> = ({ setFeedbackPage }) => {
           _hover={{ borderColor: '#F0B90B', borderWidth: 2 }}
         />
         <FormLabel fontSize='xl' color='whiteAlpha.800' fontWeight='bold'>
-          Tu mensaje
+          {fiat === 'BRL' ? 'Sua mensagem' : 'Tu mensaje'}
         </FormLabel>
         <Textarea
           size='xl'
@@ -133,7 +140,7 @@ const FeedBack: React.FC<FeedbackProps> = ({ setFeedbackPage }) => {
           isLoading={loading}
           loadingText='Enviando...'
         >
-          Enviar
+          {fiat === 'BRL' ? 'Mandar' : 'Enviar'}
         </Button>
       </VStack>
       {success && (

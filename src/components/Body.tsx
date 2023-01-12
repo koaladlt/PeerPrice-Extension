@@ -16,6 +16,7 @@ interface BodyProps {
   condition: string;
   url: string;
   paymentMethod: string[];
+  fiat: string;
 }
 
 const Body: React.FC<BodyProps> = ({
@@ -25,6 +26,7 @@ const Body: React.FC<BodyProps> = ({
   condition,
   url,
   paymentMethod,
+  fiat,
 }) => {
   return (
     <VStack backgroundColor='gray.800' my={6}>
@@ -70,7 +72,7 @@ const Body: React.FC<BodyProps> = ({
                   fontSize='xx-small'
                   fontWeight='extrabold'
                 >
-                  ARS
+                  {fiat}
                 </Text>
               </HStack>
               <Button

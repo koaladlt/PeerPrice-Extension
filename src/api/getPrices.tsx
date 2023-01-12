@@ -18,6 +18,8 @@ export const getPrices = async (
   asset: string,
   tradeType: string,
   publisherType: string,
+  fiat: string,
+  payType: string[],
   controller: AbortController
 ) => {
   try {
@@ -27,15 +29,16 @@ export const getPrices = async (
         proMerchantAds: false,
         page: 1,
         rows: 10,
-        payTypes: [],
+        payTypes: payType[0].length > 0 ? payType : [],
         countries: [],
         publisherType,
         tradeType,
         asset,
-        fiat: 'ARS',
+        fiat: fiat,
       },
       { signal: controller.signal }
     );
+
     return req.data as ResultStructure;
   } catch (error) {
     console.log(error);

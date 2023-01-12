@@ -8,6 +8,6 @@
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "Node",
-    "types": ["chrome"]
+    "types": ["chrome", "webpack-env"]
   }
 }
