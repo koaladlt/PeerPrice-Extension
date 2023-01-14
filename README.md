@@ -1,6 +1,6 @@
 # PeerPrice - CHROME EXTENSION
 
-![LogoMakr-5zxoqB](https://user-images.githubusercontent.com/64273203/176478045-815f99d1-8bf4-43e7-9aaf-4635a5ccea30.png)
+
 
 
 Una extensión de Google Chrome para revisar los precios actuales de Binance P2P en diferentes FIATS.
