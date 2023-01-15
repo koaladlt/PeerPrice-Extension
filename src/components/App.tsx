@@ -11,6 +11,7 @@ import {
   Stack,
 } from '@chakra-ui/react';
 import { FaGithub, FaRegEnvelope, FaDonate } from 'react-icons/fa';
+import { IoOpenOutline } from 'react-icons/io5';
 
 import Body from './Body';
 import FeedBack from './Feedback';
@@ -57,6 +58,18 @@ const App = () => {
       controller.abort();
     };
   }, [change]);
+
+  useEffect(() => {
+    if (condition === 'BUY') {
+      setUrl(
+        `https://p2p.binance.com/en/trade/all-payments/${selectedCurrency}?fiat=${fiat}`
+      );
+    } else {
+      setUrl(
+        `https://p2p.binance.com/en/trade/sell/${selectedCurrency}?fiat=${fiat}&payment=ALL`
+      );
+    }
+  }, [fiat, selectedCurrency, condition]);
 
   useEffect(() => {
     getDollarsPrices();
@@ -158,13 +171,20 @@ const App = () => {
             <Text color={'whiteAlpha.800'}>@koaladlt</Text>
           </HStack>
         </HStack>
-        <Text
-          color={'whiteAlpha.800'}
-          fontSize='large'
-          fontWeight={'extrabold'}
-        >
-          {fiat === 'BRL' ? 'Cotações P2P' : 'Cotizaciones P2P en Binance'}
-        </Text>
+        <HStack justifyContent='center'>
+          <Text
+            color={'whiteAlpha.800'}
+            fontSize='large'
+            fontWeight={'extrabold'}
+          >
+            {fiat === 'BRL' ? 'Cotações P2P' : 'Cotizaciones P2P en Binance'}
+          </Text>
+          <IoOpenOutline
+            onClick={() => chrome.tabs.create({ url: 'popup.html' })}
+            cursor='pointer'
+            color='white'
+          />
+        </HStack>
         <Box my={3} display='flex' justifyContent='center'>
           <Select
             color='whiteAlpha.800'
