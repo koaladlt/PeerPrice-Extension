@@ -199,7 +199,15 @@ const App = () => {
             onChange={(e) => handleFiatChange(e.target.value)}
           >
             {FIATS.map((fiat) => (
-              <option key={fiat} value={fiat}>
+              <option
+                style={{
+                  backgroundColor: '#2D3748',
+                  color: '#ffffffcc',
+                  fontWeight: 'bold',
+                }}
+                key={fiat}
+                value={fiat}
+              >
                 {fiat}
               </option>
             ))}
@@ -353,7 +361,16 @@ const App = () => {
                   ({ fiat: countryFiat, methods }) =>
                     countryFiat === fiat &&
                     methods.map(({ key, name }) => (
-                      <option value={key}>{name}</option>
+                      <option
+                        style={{
+                          backgroundColor: '#2D3748',
+                          color: '#ffffffcc',
+                          fontWeight: 'bold',
+                        }}
+                        value={key}
+                      >
+                        {name}
+                      </option>
                     ))
                 )}
               </Select>
@@ -370,8 +387,26 @@ const App = () => {
                 disabled={loading}
                 value={condition}
               >
-                <option value='BUY'>Comprar</option>
-                <option value='SELL'>Vender</option>
+                <option
+                  style={{
+                    backgroundColor: '#2D3748',
+                    color: '#ffffffcc',
+                    fontWeight: 'bold',
+                  }}
+                  value='BUY'
+                >
+                  Comprar
+                </option>
+                <option
+                  style={{
+                    backgroundColor: '#2D3748',
+                    color: '#ffffffcc',
+                    fontWeight: 'bold',
+                  }}
+                  value='SELL'
+                >
+                  Vender
+                </option>
               </Select>
             </HStack>
             <Stack my={4} display='flex' alignItems='center'>
