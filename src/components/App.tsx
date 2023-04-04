@@ -18,9 +18,19 @@ import FeedBack from './Feedback';
 import { getDollars, getPrices } from '../api/getPrices';
 import { FIATS, PaymentMethods } from '../data';
 import Donate from './Donate';
+import { Datum, ResultStructure } from '../types/api.interface';
+import UserInfo from './UserInfo';
+
+export interface PricesType {
+  prices: Datum[];
+  errorMessage: string;
+}
 
 const App = () => {
-  const [prices, setPrices] = useState({ prices: [], errorMessage: '' });
+  const [prices, setPrices] = useState<PricesType>({
+    prices: [],
+    errorMessage: '',
+  });
   const [loading, setLoading] = useState(false);
   const [loadingDollars, setLoadingDollars] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState<string>('');
@@ -34,6 +44,7 @@ const App = () => {
   const [page, setPage] = useState<string>('Home');
   const [fiat, setFiat] = useState<string>('ARS');
   const controller = new AbortController();
+  const [userInfo, setUserInfo] = useState<Datum | undefined | null>();
 
   useEffect(() => {
     if (selectedCurrency.length > 0) {
@@ -138,9 +149,8 @@ const App = () => {
         controller
       );
 
-      // setUrl(data.url);
       setPrices({
-        prices: data.data.map((price) => price.adv.price),
+        prices: data.data.map((price) => price),
         errorMessage:
           data.data.length > 0 ? '' : 'No se ha encontrado ninguna oferta',
       });
@@ -257,6 +267,8 @@ const App = () => {
           <FeedBack fiat={fiat} setPage={setPage} />
         ) : page === 'Donate' ? (
           <Donate setPage={setPage} fiat={fiat} />
+        ) : page === 'UserInfo' ? (
+          <UserInfo setPage={setPage} userInfo={userInfo} />
         ) : (
           <>
             <HStack justifyContent='space-evenly'>
@@ -355,6 +367,7 @@ const App = () => {
                 fontWeight='bold'
                 disabled={loading}
                 value={paymentMethod}
+                multiple={false}
                 onChange={(e) => handlePaymentMethodChange(e)}
               >
                 {PaymentMethods.map(
@@ -362,6 +375,7 @@ const App = () => {
                     countryFiat === fiat &&
                     methods.map(({ key, name }) => (
                       <option
+                        key={key}
                         style={{
                           backgroundColor: '#2D3748',
                           color: '#ffffffcc',
@@ -381,6 +395,7 @@ const App = () => {
                 fontSize='xs'
                 size='xs'
                 borderRadius={5}
+                multiple={false}
                 fontWeight='bold'
                 textAlign='center'
                 onChange={(e) => handleConditionChange(e)}
@@ -426,13 +441,17 @@ const App = () => {
               </Checkbox>
             </Stack>
             <Body
+              userInfo={userInfo}
+              setUserInfo={setUserInfo}
               fiat={fiat}
               loading={loading}
               error={error}
-              prices={prices.prices}
+              prices={prices}
               condition={condition}
               url={url}
               paymentMethod={paymentMethod}
+              setPage={setPage}
+              page={page}
             />
           </>
         )}

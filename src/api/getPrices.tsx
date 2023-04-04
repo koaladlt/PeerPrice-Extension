@@ -1,13 +1,6 @@
 import axios from 'axios';
 import { ResultStructure, EmailValues } from '../types/api.interface';
 
-interface ResponseData {
-  data: {
-    prices: string[];
-    url: string;
-  };
-}
-
 export const getDollars = async () => {
   const req = await axios.get(process.env.API_DOLAR);
   const res = req.data;
@@ -38,6 +31,8 @@ export const getPrices = async (
       },
       { signal: controller.signal }
     );
+
+    console.log(req.data);
 
     return req.data as ResultStructure;
   } catch (error) {
