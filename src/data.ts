@@ -133,6 +133,7 @@ export const PaymentMethods: PaymentMethodsType[] = [
       { key: 'SkrillMoneybookers', name: 'Skrill' },
       { key: 'BancoPichincha', name: 'Pichincha' },
       { key: 'PerfectMoney', name: 'Perfect Money' },
+      { key: 'Utoppia', name: 'Utoppia' },
     ],
   },
   {

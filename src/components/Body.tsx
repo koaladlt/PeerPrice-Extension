@@ -11,7 +11,7 @@ import {
 import { Datum } from '../types/api.interface';
 import { PricesType } from './App';
 import { FaInfoCircle, FaCheckCircle } from 'react-icons/fa';
-import UserInfo from './UserInfo';
+
 
 interface BodyProps {
   loading: boolean;
