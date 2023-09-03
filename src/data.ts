@@ -170,19 +170,19 @@ export const cryptoAdresses: {
   [key: string]: any;
 } = {
   BTC: {
-    BEP20: '0x09384c0456bfce707394b37bb9b10fe9c3d186d9',
+    BEP20: '0xcba9062ee6252f86abfe37ba4092d3c81b6a9bbe',
     BTC: '1PdgpGJ21JRcnay5BAtNvVsrYkt7X6sEhy',
   },
   BUSD: {
-    BEP20: '0x09384c0456bfce707394b37bb9b10fe9c3d186d9',
-    ERC20: '0x09384c0456bfce707394b37bb9b10fe9c3d186d9',
+    BEP20: '0xcba9062ee6252f86abfe37ba4092d3c81b6a9bbe',
+    ERC20: '0xcba9062ee6252f86abfe37ba4092d3c81b6a9bbe',
   },
   USDT: {
-    BEP20: '0x09384c0456bfce707394b37bb9b10fe9c3d186d9',
-    ERC20: '0x09384c0456bfce707394b37bb9b10fe9c3d186d9',
+    BEP20: '0xcba9062ee6252f86abfe37ba4092d3c81b6a9bbe',
+    ERC20: '0xcba9062ee6252f86abfe37ba4092d3c81b6a9bbe',
   },
   DAI: {
-    BEP20: '0x09384c0456bfce707394b37bb9b10fe9c3d186d9',
-    ERC20: '0x09384c0456bfce707394b37bb9b10fe9c3d186d9',
+    BEP20: '0xcba9062ee6252f86abfe37ba4092d3c81b6a9bbe',
+    ERC20: '0xcba9062ee6252f86abfe37ba4092d3c81b6a9bbe',
   },
 };

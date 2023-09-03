@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "PeerPrice",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Cotizaciones en tiempo real de Binance P2P en LATAM",
   "icons": {
     "16": "logo.png",

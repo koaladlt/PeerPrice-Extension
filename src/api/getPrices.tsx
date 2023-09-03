@@ -32,8 +32,6 @@ export const getPrices = async (
       { signal: controller.signal }
     );
 
-    console.log(req.data);
-
     return req.data as ResultStructure;
   } catch (error) {
     console.log(error);

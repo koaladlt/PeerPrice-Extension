@@ -9,7 +9,6 @@ interface UserInfoProps {
 }
 
 const UserInfo: React.FC<UserInfoProps> = ({ setPage, userInfo }) => {
-  console.log({ userInfo });
   return (
     <VStack backgroundColor='gray.800' my={6} px={10}>
       <Box mb={10} w='100%'>

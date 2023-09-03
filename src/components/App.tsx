@@ -12,13 +12,13 @@ import {
 } from '@chakra-ui/react';
 import { FaGithub, FaRegEnvelope, FaDonate } from 'react-icons/fa';
 import { IoOpenOutline } from 'react-icons/io5';
-
+import { AiFillCloseCircle } from 'react-icons/ai';
 import Body from './Body';
 import FeedBack from './Feedback';
 import { getDollars, getPrices } from '../api/getPrices';
 import { FIATS, PaymentMethods } from '../data';
 import Donate from './Donate';
-import { Datum, ResultStructure } from '../types/api.interface';
+import { Datum } from '../types/api.interface';
 import UserInfo from './UserInfo';
 
 export interface PricesType {
@@ -43,18 +43,33 @@ const App = () => {
   const [paymentMethod, setPaymentMethod] = useState<string[]>(['']);
   const [page, setPage] = useState<string>('Home');
   const [fiat, setFiat] = useState<string>('ARS');
+  const [showRankMessage, setShowRankMessage] = useState(true);
   const controller = new AbortController();
   const [userInfo, setUserInfo] = useState<Datum | undefined | null>();
+
+  useEffect(() => {
+    chrome.storage.sync.get(['showRankMessage'], ({ showRankMessage }) => {
+      if (typeof showRankMessage === 'boolean' && !showRankMessage) {
+        setShowRankMessage(showRankMessage);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (selectedCurrency.length > 0) {
       getPrice(selectedCurrency, condition, verifiedUser, paymentMethod, fiat);
     } else {
       chrome.storage.sync.get(
-        ['currency', 'condition', 'verifiedUser', 'paymentMethod', 'fiat'],
+        [
+          'currency',
+          'condition',
+          'verifiedUser',
+          'paymentMethod',
+          'fiat',
+          'showRankMessage',
+        ],
         ({ currency, condition, verifiedUser, paymentMethod, fiat }) => {
           if (currency) {
-            console.log(paymentMethod);
             setCondition(condition);
             setVerifiedUser(verifiedUser);
             setPaymentMethod(paymentMethod);
@@ -85,6 +100,11 @@ const App = () => {
   useEffect(() => {
     getDollarsPrices();
   }, []);
+
+  const handleShowMessage = async () => {
+    setShowRankMessage(false);
+    await chrome.storage.sync.set({ showRankMessage: false });
+  };
 
   const handleConditionChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setCondition(e.target.value);
@@ -189,12 +209,36 @@ const App = () => {
           >
             {fiat === 'BRL' ? 'Cotações P2P' : 'Cotizaciones P2P en Binance'}
           </Text>
+
           <IoOpenOutline
             onClick={() => chrome.tabs.create({ url: 'popup.html' })}
             cursor='pointer'
             color='white'
           />
         </HStack>
+        {showRankMessage && (
+          <HStack justifyContent='center'>
+            <Text
+              _hover={{ textDecoration: 'underline' }}
+              color={'whiteAlpha.800'}
+              fontWeight={'extrabold'}
+              cursor='pointer'
+            >
+              <a
+                href='https://chrome.google.com/webstore/detail/peerprice/dnliacgmindidcbcjalfpeklfpioholi?hl=es&authuser=1'
+                target='_blank'
+              >
+                Puntuá la extensión en Chrome Web Store
+              </a>
+            </Text>
+            <AiFillCloseCircle
+              cursor='pointer'
+              color='white'
+              onClick={() => handleShowMessage()}
+            />
+          </HStack>
+        )}
+
         <Box my={3} display='flex' justifyContent='center'>
           <Select
             color='whiteAlpha.800'
@@ -353,6 +397,21 @@ const App = () => {
                 disabled={loading}
               >
                 ETH
+              </Button>
+              <Button
+                color='#F0B90B'
+                size='sm'
+                variant='link'
+                textDecoration={
+                  selectedCurrency === 'XRP' ? 'underline' : undefined
+                }
+                textUnderlineOffset={4}
+                onClick={() => {
+                  getPrice('XRP', condition, verifiedUser, paymentMethod, fiat);
+                }}
+                disabled={loading}
+              >
+                XRP
               </Button>
             </HStack>
 

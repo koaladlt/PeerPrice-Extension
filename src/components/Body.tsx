@@ -12,7 +12,6 @@ import { Datum } from '../types/api.interface';
 import { PricesType } from './App';
 import { FaInfoCircle, FaCheckCircle } from 'react-icons/fa';
 
-
 interface BodyProps {
   loading: boolean;
   error: boolean;
@@ -54,6 +53,7 @@ const Body: React.FC<BodyProps> = ({
                 tiempo de respuesta puede ser mayor
               </Text>
             )}
+
             <Spinner alignItems='center' color='#F0B90B' />
           </>
         ) : null}
