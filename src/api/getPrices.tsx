@@ -1,10 +1,18 @@
-import axios from 'axios';
-import { ResultStructure, EmailValues } from '../types/api.interface';
+import axios from "axios";
+import { ResultStructure, EmailValues } from "../types/api.interface";
 
 export const getDollars = async () => {
   const req = await axios.get(process.env.API_DOLAR);
   const res = req.data;
   return res;
+};
+
+export const getDollarBlue = async () => {
+  const req = await axios.get(process.env.API_DOLAR_BLUE);
+  const res = req.data;
+  if (res.venta) {
+    return res.venta;
+  }
 };
 
 export const getPrices = async (

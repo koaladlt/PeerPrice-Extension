@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent } from "react";
 import {
   VStack,
   Button,
@@ -9,17 +9,17 @@ import {
   Select,
   Skeleton,
   Stack,
-} from '@chakra-ui/react';
-import { FaGithub, FaRegEnvelope, FaDonate } from 'react-icons/fa';
-import { IoOpenOutline } from 'react-icons/io5';
-import { AiFillCloseCircle } from 'react-icons/ai';
-import Body from './Body';
-import FeedBack from './Feedback';
-import { getDollars, getPrices } from '../api/getPrices';
-import { FIATS, PaymentMethods } from '../data';
-import Donate from './Donate';
-import { Datum } from '../types/api.interface';
-import UserInfo from './UserInfo';
+} from "@chakra-ui/react";
+import { FaGithub, FaRegEnvelope, FaDonate } from "react-icons/fa";
+import { IoOpenOutline } from "react-icons/io5";
+import { AiFillCloseCircle } from "react-icons/ai";
+import Body from "./Body";
+import FeedBack from "./Feedback";
+import { getDollarBlue, getDollars, getPrices } from "../api/getPrices";
+import { FIATS, PaymentMethods } from "../data";
+import Donate from "./Donate";
+import { Datum } from "../types/api.interface";
+import UserInfo from "./UserInfo";
 
 export interface PricesType {
   prices: Datum[];
@@ -29,27 +29,27 @@ export interface PricesType {
 const App = () => {
   const [prices, setPrices] = useState<PricesType>({
     prices: [],
-    errorMessage: '',
+    errorMessage: "",
   });
   const [loading, setLoading] = useState(false);
   const [loadingDollars, setLoadingDollars] = useState(false);
-  const [selectedCurrency, setSelectedCurrency] = useState<string>('');
-  const [dollars, setDollars] = useState({ blue: '', mep: '', ccl: '' });
-  const [condition, setCondition] = useState<string>('BUY');
+  const [selectedCurrency, setSelectedCurrency] = useState<string>("");
+  const [dollars, setDollars] = useState({ blue: "", mep: "", ccl: "" });
+  const [condition, setCondition] = useState<string>("BUY");
   const [verifiedUser, setVerifiedUser] = useState(false);
   const [change, setChange] = useState(false);
-  const [url, setUrl] = useState('https://p2p.binance.com/');
+  const [url, setUrl] = useState("https://p2p.binance.com/");
   const [error, setError] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<string[]>(['']);
-  const [page, setPage] = useState<string>('Home');
-  const [fiat, setFiat] = useState<string>('ARS');
+  const [paymentMethod, setPaymentMethod] = useState<string[]>([""]);
+  const [page, setPage] = useState<string>("Home");
+  const [fiat, setFiat] = useState<string>("ARS");
   const [showRankMessage, setShowRankMessage] = useState(true);
   const controller = new AbortController();
   const [userInfo, setUserInfo] = useState<Datum | undefined | null>();
 
   useEffect(() => {
-    chrome.storage.sync.get(['showRankMessage'], ({ showRankMessage }) => {
-      if (typeof showRankMessage === 'boolean' && !showRankMessage) {
+    chrome.storage.sync.get(["showRankMessage"], ({ showRankMessage }) => {
+      if (typeof showRankMessage === "boolean" && !showRankMessage) {
         setShowRankMessage(showRankMessage);
       }
     });
@@ -61,12 +61,12 @@ const App = () => {
     } else {
       chrome.storage.sync.get(
         [
-          'currency',
-          'condition',
-          'verifiedUser',
-          'paymentMethod',
-          'fiat',
-          'showRankMessage',
+          "currency",
+          "condition",
+          "verifiedUser",
+          "paymentMethod",
+          "fiat",
+          "showRankMessage",
         ],
         ({ currency, condition, verifiedUser, paymentMethod, fiat }) => {
           if (currency) {
@@ -86,7 +86,7 @@ const App = () => {
   }, [change]);
 
   useEffect(() => {
-    if (condition === 'BUY') {
+    if (condition === "BUY") {
       setUrl(
         `https://p2p.binance.com/en/trade/all-payments/${selectedCurrency}?fiat=${fiat}`
       );
@@ -123,7 +123,7 @@ const App = () => {
 
   const handleFiatChange = (currency: string) => {
     setFiat(currency);
-    setPaymentMethod(['']);
+    setPaymentMethod([""]);
     setChange(!change);
   };
 
@@ -131,7 +131,8 @@ const App = () => {
     try {
       setLoadingDollars(true);
       const d = await getDollars();
-      setDollars({ blue: d.blue, ccl: d.ccl, mep: d.mep });
+      const blue = await getDollarBlue();
+      setDollars({ blue, ccl: d.ccl, mep: d.mep });
       setLoadingDollars(false);
     } catch (error) {
       console.log(error);
@@ -149,13 +150,13 @@ const App = () => {
     try {
       await chrome.storage.sync.set({
         currency,
-        condition: condition.length > 0 ? condition : 'BUY',
+        condition: condition.length > 0 ? condition : "BUY",
         verifiedUser,
         paymentMethod,
         fiat,
       });
       setError(false);
-      setPrices({ prices: [], errorMessage: '' });
+      setPrices({ prices: [], errorMessage: "" });
       setSelectedCurrency(currency);
       setFiat(fiat);
       setLoading(true);
@@ -163,7 +164,7 @@ const App = () => {
       const data = await getPrices(
         currency,
         condition,
-        verifiedUser ? 'merchant' : null,
+        verifiedUser ? "merchant" : null,
         fiat,
         paymentMethod,
         controller
@@ -172,7 +173,7 @@ const App = () => {
       setPrices({
         prices: data.data.map((price) => price),
         errorMessage:
-          data.data.length > 0 ? '' : 'No se ha encontrado ninguna oferta',
+          data.data.length > 0 ? "" : "No se ha encontrado ninguna oferta",
       });
       setLoading(false);
     } catch (error) {
@@ -183,71 +184,71 @@ const App = () => {
   };
 
   return (
-    <VStack backgroundColor='gray.800'>
-      <Box width='100%' backgroundColor='gray.700' py={2}>
-        <HStack justifyContent='space-between' mr={2} ml={2} mb={3}>
-          <HStack onClick={() => setPage('Feedback')} cursor='pointer'>
-            <FaRegEnvelope color='#F0B90B' size={15} />
-            <Text color='whiteAlpha.800'>Feedback</Text>
+    <VStack backgroundColor="gray.800">
+      <Box width="100%" backgroundColor="gray.700" py={2}>
+        <HStack justifyContent="space-between" mr={2} ml={2} mb={3}>
+          <HStack onClick={() => setPage("Feedback")} cursor="pointer">
+            <FaRegEnvelope color="#F0B90B" size={15} />
+            <Text color="whiteAlpha.800">Feedback</Text>
           </HStack>
-          <HStack onClick={() => setPage('Donate')} cursor='pointer'>
-            <FaDonate color='#F0B90B' size={15} />
+          <HStack onClick={() => setPage("Donate")} cursor="pointer">
+            <FaDonate color="#F0B90B" size={15} />
           </HStack>
           <HStack
-            cursor='pointer'
-            onClick={() => window.open('http://github.com/koaladlt')}
+            cursor="pointer"
+            onClick={() => window.open("http://github.com/koaladlt")}
           >
-            <FaGithub color='#F0B90B' size={15} />
-            <Text color={'whiteAlpha.800'}>@koaladlt</Text>
+            <FaGithub color="#F0B90B" size={15} />
+            <Text color={"whiteAlpha.800"}>@koaladlt</Text>
           </HStack>
         </HStack>
-        <HStack justifyContent='center'>
+        <HStack justifyContent="center">
           <Text
-            color={'whiteAlpha.800'}
-            fontSize='large'
-            fontWeight={'extrabold'}
+            color={"whiteAlpha.800"}
+            fontSize="large"
+            fontWeight={"extrabold"}
           >
-            {fiat === 'BRL' ? 'Cotações P2P' : 'Cotizaciones P2P en Binance'}
+            {fiat === "BRL" ? "Cotações P2P" : "Cotizaciones P2P en Binance"}
           </Text>
 
           <IoOpenOutline
-            onClick={() => chrome.tabs.create({ url: 'popup.html' })}
-            cursor='pointer'
-            color='white'
+            onClick={() => chrome.tabs.create({ url: "popup.html" })}
+            cursor="pointer"
+            color="white"
           />
         </HStack>
         {showRankMessage && (
-          <HStack justifyContent='center'>
+          <HStack justifyContent="center">
             <Text
-              _hover={{ textDecoration: 'underline' }}
-              color={'whiteAlpha.800'}
-              fontWeight={'extrabold'}
-              cursor='pointer'
+              _hover={{ textDecoration: "underline" }}
+              color={"whiteAlpha.800"}
+              fontWeight={"extrabold"}
+              cursor="pointer"
             >
               <a
-                href='https://chrome.google.com/webstore/detail/peerprice/dnliacgmindidcbcjalfpeklfpioholi?hl=es&authuser=1'
-                target='_blank'
+                href="https://chrome.google.com/webstore/detail/peerprice/dnliacgmindidcbcjalfpeklfpioholi?hl=es&authuser=1"
+                target="_blank"
               >
                 Puntuá la extensión en Chrome Web Store
               </a>
             </Text>
             <AiFillCloseCircle
-              cursor='pointer'
-              color='white'
+              cursor="pointer"
+              color="white"
               onClick={() => handleShowMessage()}
             />
           </HStack>
         )}
 
-        <Box my={3} display='flex' justifyContent='center'>
+        <Box my={3} display="flex" justifyContent="center">
           <Select
-            color='whiteAlpha.800'
-            fontWeight='bold'
-            fontSize='md'
+            color="whiteAlpha.800"
+            fontWeight="bold"
+            fontSize="md"
             value={fiat}
-            width='25%'
-            size='sm'
-            borderColor='#F0B90B'
+            width="25%"
+            size="sm"
+            borderColor="#F0B90B"
             _hover={{ opacity: 0.8 }}
             borderRadius={10}
             onChange={(e) => handleFiatChange(e.target.value)}
@@ -255,9 +256,9 @@ const App = () => {
             {FIATS.map((fiat) => (
               <option
                 style={{
-                  backgroundColor: '#2D3748',
-                  color: '#ffffffcc',
-                  fontWeight: 'bold',
+                  backgroundColor: "#2D3748",
+                  color: "#ffffffcc",
+                  fontWeight: "bold",
                 }}
                 key={fiat}
                 value={fiat}
@@ -267,38 +268,38 @@ const App = () => {
             ))}
           </Select>
         </Box>
-        {fiat === 'ARS' && (
-          <HStack mt={2} justifyContent='space-evenly'>
+        {fiat === "ARS" && (
+          <HStack mt={2} justifyContent="space-evenly">
             {loadingDollars ? (
               <>
                 <Skeleton
-                  startColor='whiteAlpha.600'
-                  endColor='whiteAlpha.400'
-                  height={'20px'}
-                  width='50px'
+                  startColor="whiteAlpha.600"
+                  endColor="whiteAlpha.400"
+                  height={"20px"}
+                  width="50px"
                 />
                 <Skeleton
-                  startColor='whiteAlpha.600'
-                  endColor='whiteAlpha.400'
-                  height={'20px'}
-                  width='50px'
+                  startColor="whiteAlpha.600"
+                  endColor="whiteAlpha.400"
+                  height={"20px"}
+                  width="50px"
                 />
                 <Skeleton
-                  startColor='whiteAlpha.600'
-                  endColor='whiteAlpha.400'
-                  height={'20px'}
-                  width='50px'
+                  startColor="whiteAlpha.600"
+                  endColor="whiteAlpha.400"
+                  height={"20px"}
+                  width="50px"
                 />
               </>
             ) : (
               <>
-                <Text color='whiteAlpha.800' fontWeight='bold'>
+                <Text color="whiteAlpha.800" fontWeight="bold">
                   Blue: ${dollars.blue}
                 </Text>
-                <Text color='whiteAlpha.800' fontWeight='bold'>
+                <Text color="whiteAlpha.800" fontWeight="bold">
                   Mep: ${dollars.mep}
                 </Text>
-                <Text color='whiteAlpha.800' fontWeight='bold'>
+                <Text color="whiteAlpha.800" fontWeight="bold">
                   CCL: ${dollars.ccl}
                 </Text>
               </>
@@ -306,26 +307,26 @@ const App = () => {
           </HStack>
         )}
       </Box>
-      <Box width='100%' backgroundColor='gray.800' my={2}>
-        {page === 'Feedback' ? (
+      <Box width="100%" backgroundColor="gray.800" my={2}>
+        {page === "Feedback" ? (
           <FeedBack fiat={fiat} setPage={setPage} />
-        ) : page === 'Donate' ? (
+        ) : page === "Donate" ? (
           <Donate setPage={setPage} fiat={fiat} />
-        ) : page === 'UserInfo' ? (
+        ) : page === "UserInfo" ? (
           <UserInfo setPage={setPage} userInfo={userInfo} />
         ) : (
           <>
-            <HStack justifyContent='space-evenly'>
+            <HStack justifyContent="space-evenly">
               <Button
-                color='#F0B90B'
-                size='sm'
+                color="#F0B90B"
+                size="sm"
                 onClick={() =>
-                  getPrice('USDT', condition, verifiedUser, paymentMethod, fiat)
+                  getPrice("USDT", condition, verifiedUser, paymentMethod, fiat)
                 }
-                fontFamily='Nunito'
-                variant={'link'}
+                fontFamily="Nunito"
+                variant={"link"}
                 textDecoration={
-                  selectedCurrency === 'USDT' ? 'underline' : undefined
+                  selectedCurrency === "USDT" ? "underline" : undefined
                 }
                 textUnderlineOffset={4}
                 disabled={loading}
@@ -333,31 +334,31 @@ const App = () => {
                 USDT
               </Button>
               <Button
-                color='#F0B90B'
-                size='sm'
-                variant='link'
+                color="#F0B90B"
+                size="sm"
+                variant="link"
                 textDecoration={
-                  selectedCurrency === 'DAI' ? 'underline' : undefined
+                  selectedCurrency === "DAI" ? "underline" : undefined
                 }
                 textUnderlineOffset={4}
                 onClick={() => {
-                  getPrice('DAI', condition, verifiedUser, paymentMethod, fiat);
+                  getPrice("DAI", condition, verifiedUser, paymentMethod, fiat);
                 }}
                 disabled={loading}
               >
                 DAI
               </Button>
               <Button
-                color='#F0B90B'
-                size='sm'
-                variant='link'
+                color="#F0B90B"
+                size="sm"
+                variant="link"
                 textDecoration={
-                  selectedCurrency === 'BUSD' ? 'underline' : undefined
+                  selectedCurrency === "BUSD" ? "underline" : undefined
                 }
                 textUnderlineOffset={4}
                 onClick={() => {
                   getPrice(
-                    'BUSD',
+                    "BUSD",
                     condition,
                     verifiedUser,
                     paymentMethod,
@@ -369,45 +370,45 @@ const App = () => {
                 BUSD
               </Button>
               <Button
-                color='#F0B90B'
-                size='sm'
-                variant='link'
+                color="#F0B90B"
+                size="sm"
+                variant="link"
                 textDecoration={
-                  selectedCurrency === 'BTC' ? 'underline' : undefined
+                  selectedCurrency === "BTC" ? "underline" : undefined
                 }
                 textUnderlineOffset={4}
                 onClick={() => {
-                  getPrice('BTC', condition, verifiedUser, paymentMethod, fiat);
+                  getPrice("BTC", condition, verifiedUser, paymentMethod, fiat);
                 }}
                 disabled={loading}
               >
                 BTC
               </Button>
               <Button
-                color='#F0B90B'
-                size='sm'
-                variant='link'
+                color="#F0B90B"
+                size="sm"
+                variant="link"
                 textDecoration={
-                  selectedCurrency === 'ETH' ? 'underline' : undefined
+                  selectedCurrency === "ETH" ? "underline" : undefined
                 }
                 textUnderlineOffset={4}
                 onClick={() => {
-                  getPrice('ETH', condition, verifiedUser, paymentMethod, fiat);
+                  getPrice("ETH", condition, verifiedUser, paymentMethod, fiat);
                 }}
                 disabled={loading}
               >
                 ETH
               </Button>
               <Button
-                color='#F0B90B'
-                size='sm'
-                variant='link'
+                color="#F0B90B"
+                size="sm"
+                variant="link"
                 textDecoration={
-                  selectedCurrency === 'XRP' ? 'underline' : undefined
+                  selectedCurrency === "XRP" ? "underline" : undefined
                 }
                 textUnderlineOffset={4}
                 onClick={() => {
-                  getPrice('XRP', condition, verifiedUser, paymentMethod, fiat);
+                  getPrice("XRP", condition, verifiedUser, paymentMethod, fiat);
                 }}
                 disabled={loading}
               >
@@ -415,15 +416,15 @@ const App = () => {
               </Button>
             </HStack>
 
-            <HStack my={4} justifyContent={'space-around'}>
+            <HStack my={4} justifyContent={"space-around"}>
               <Select
-                width='35%'
-                color={'whiteAlpha.800'}
-                fontSize='xs'
-                size='xs'
-                textAlign='center'
+                width="35%"
+                color={"whiteAlpha.800"}
+                fontSize="xs"
+                size="xs"
+                textAlign="center"
                 borderRadius={5}
-                fontWeight='bold'
+                fontWeight="bold"
                 disabled={loading}
                 value={paymentMethod}
                 multiple={false}
@@ -436,9 +437,9 @@ const App = () => {
                       <option
                         key={key}
                         style={{
-                          backgroundColor: '#2D3748',
-                          color: '#ffffffcc',
-                          fontWeight: 'bold',
+                          backgroundColor: "#2D3748",
+                          color: "#ffffffcc",
+                          fontWeight: "bold",
                         }}
                         value={key}
                       >
@@ -449,53 +450,53 @@ const App = () => {
               </Select>
 
               <Select
-                width='35%'
-                color={'whiteAlpha.800'}
-                fontSize='xs'
-                size='xs'
+                width="35%"
+                color={"whiteAlpha.800"}
+                fontSize="xs"
+                size="xs"
                 borderRadius={5}
                 multiple={false}
-                fontWeight='bold'
-                textAlign='center'
+                fontWeight="bold"
+                textAlign="center"
                 onChange={(e) => handleConditionChange(e)}
                 disabled={loading}
                 value={condition}
               >
                 <option
                   style={{
-                    backgroundColor: '#2D3748',
-                    color: '#ffffffcc',
-                    fontWeight: 'bold',
+                    backgroundColor: "#2D3748",
+                    color: "#ffffffcc",
+                    fontWeight: "bold",
                   }}
-                  value='BUY'
+                  value="BUY"
                 >
                   Comprar
                 </option>
                 <option
                   style={{
-                    backgroundColor: '#2D3748',
-                    color: '#ffffffcc',
-                    fontWeight: 'bold',
+                    backgroundColor: "#2D3748",
+                    color: "#ffffffcc",
+                    fontWeight: "bold",
                   }}
-                  value='SELL'
+                  value="SELL"
                 >
                   Vender
                 </option>
               </Select>
             </HStack>
-            <Stack my={4} display='flex' alignItems='center'>
+            <Stack my={4} display="flex" alignItems="center">
               <Checkbox
                 isChecked={verifiedUser}
-                textColor={'whiteAlpha.800'}
+                textColor={"whiteAlpha.800"}
                 onChange={() => handleVerified()}
                 disabled={loading}
-                _hover={{ borderColor: '#E5C232' }}
-                colorScheme='yellow'
+                _hover={{ borderColor: "#E5C232" }}
+                colorScheme="yellow"
               >
-                <Text fontSize={'xs'} fontWeight='bold'>
-                  {fiat === 'BRL'
-                    ? 'Anúncios de comerciantes'
-                    : 'Solo usuarios verificados'}
+                <Text fontSize={"xs"} fontWeight="bold">
+                  {fiat === "BRL"
+                    ? "Anúncios de comerciantes"
+                    : "Solo usuarios verificados"}
                 </Text>
               </Checkbox>
             </Stack>
