@@ -132,7 +132,10 @@ const App = () => {
       setLoadingDollars(true);
       const d = await getDollars();
       const blue = await getDollarBlue();
-      setDollars({ blue, ccl: d.ccl, mep: d.mep });
+      const ccl = d?.ccl?.gd30["48hs"].price || "";
+      const mep = d?.mep?.al30["48hs"].price || "";
+
+      setDollars({ blue, ccl, mep });
       setLoadingDollars(false);
     } catch (error) {
       console.log(error);
@@ -347,27 +350,6 @@ const App = () => {
                 disabled={loading}
               >
                 DAI
-              </Button>
-              <Button
-                color="#F0B90B"
-                size="sm"
-                variant="link"
-                textDecoration={
-                  selectedCurrency === "BUSD" ? "underline" : undefined
-                }
-                textUnderlineOffset={4}
-                onClick={() => {
-                  getPrice(
-                    "BUSD",
-                    condition,
-                    verifiedUser,
-                    paymentMethod,
-                    fiat
-                  );
-                }}
-                disabled={loading}
-              >
-                BUSD
               </Button>
               <Button
                 color="#F0B90B"

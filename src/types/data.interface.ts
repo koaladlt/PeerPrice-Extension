@@ -4,20 +4,15 @@ export interface PaymentMethodsType {
 }
 
 export interface CryptoToDonate {
-  BTC: 'BTC';
-  BUSD: 'BUSD';
-  USDT: 'USDT';
-  DAI: 'DAI';
+  BTC: "BTC";
+  USDT: "USDT";
+  DAI: "DAI";
 }
 
 export interface CryptoAddresses {
   BTC: {
     BEP20: string;
     BTC: string;
-  };
-  BUSD: {
-    BEP20: string;
-    ERC20: string;
   };
   USDT: { BEP20: string; ERC20: string };
   DAI: { BEP20: string; ERC20: string };
