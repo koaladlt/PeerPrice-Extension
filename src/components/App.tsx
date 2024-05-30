@@ -132,8 +132,8 @@ const App = () => {
       setLoadingDollars(true);
       const d = await getDollars();
       const blue = await getDollarBlue();
-      const ccl = d?.ccl?.gd30["48hs"].price || "";
-      const mep = d?.mep?.al30["48hs"].price || "";
+      const ccl = d?.ccl?.gd30["24hs"].price || "";
+      const mep = d?.mep?.al30["24hs"].price || "";
 
       setDollars({ blue, ccl, mep });
       setLoadingDollars(false);
