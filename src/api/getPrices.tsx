@@ -1,6 +1,10 @@
 import axios from "axios";
 import { ResultStructure, EmailValues } from "../types/api.interface";
 
+const BINANCE_P2P_SEARCH =
+  "https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search";
+const WEB3FORMS_URL = "https://api.web3forms.com/submit";
+
 export const getDollars = async () => {
   const req = await axios.get(process.env.API_DOLAR);
   const res = req.data;
@@ -25,7 +29,7 @@ export const getPrices = async (
 ) => {
   try {
     const req = await axios.post(
-      process.env.API,
+      BINANCE_P2P_SEARCH,
       {
         proMerchantAds: false,
         page: 1,
@@ -49,7 +53,14 @@ export const getPrices = async (
 
 export const sendEmail = async (body: EmailValues) => {
   try {
-    const req = await axios.post(`${process.env.API}/sendMail`, body);
+    const req = await axios.post(WEB3FORMS_URL, {
+      access_key: process.env.WEB3FORMS_KEY,
+      subject: "¡Nuevo feedback!",
+      from_name: "PeerPrice",
+      email: body.mail,
+      message: body.message,
+    });
+    if (!req.data?.success) throw new Error(req.data?.message);
     return req.data;
   } catch (error) {
     console.log(error);
